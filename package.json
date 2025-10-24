@@ -11,10 +11,13 @@
     "typecheck:node": "tsc --noEmit -p tsconfig.node.json --composite false",
     "svelte-check": "svelte-check --tsconfig ./src/renderer/tsconfig.json",
     "typecheck": "npm run typecheck:node && npm run svelte-check",
-    "dev": "concurrently -n \"SK,EL\" -c \"bgBlue,bgMagenta\" \"npm run dev:sveltekit\" \"npm:dev:electron-delayed\" --kill-others",
-    "dev:sveltekit": "cd src/renderer && vite dev --port 5173",
-    "dev:electron-delayed": "powershell -Command \"Start-Sleep -Seconds 2\" && electron-vite dev --watch",
-    "build": "npm run typecheck && npm run build:renderer && npm run build:electron",
+    "backend:build": "powershell -Command \"& .\\scripts\\build_backend.bat\"",
+    "backend:start": "powershell -Command \"Start-Process -FilePath '.\\backend\\build\\Release\\hw_analyzer_backend.exe' -WindowStyle Normal\"",
+    "dev": "concurrently -n \"BE,SK,EL\" -c \"bgGreen,bgBlue,bgMagenta\" \"npm run dev:backend\" \"npm run dev:sveltekit\" \"npm:dev:electron-delayed\" --kill-others",
+    "dev:backend": "powershell -Command \"if (Test-Path .\\backend\\build\\Release\\hw_analyzer_backend.exe) { .\\backend\\build\\Release\\hw_analyzer_backend.exe } else { Write-Host 'Backend not built. Run: npm run backend:build' }\"",
+    "dev:sveltekit": "powershell -Command \"Start-Sleep -Seconds 1\" && cd src/renderer && vite dev --port 5173",
+    "dev:electron-delayed": "powershell -Command \"Start-Sleep -Seconds 3\" && electron-vite dev --watch",
+    "build": "npm run backend:build && npm run typecheck && npm run build:renderer && npm run build:electron",
     "build:renderer": "cd src/renderer && vite build",
     "build:electron": "electron-vite build && powershell -Command \"Copy-Item -Path 'src/renderer/build' -Destination 'out/renderer' -Recurse -Force\"",
     "postinstall": "electron-builder install-app-deps && cd src/renderer && npm install",
@@ -26,7 +29,8 @@
   "dependencies": {
     "@electron-toolkit/preload": "^3.0.2",
     "@electron-toolkit/utils": "^4.0.0",
-    "electron-updater": "^6.3.9"
+    "electron-updater": "^6.3.9",
+    "ws": "^8.18.3"
   },
   "devDependencies": {
     "@electron-toolkit/eslint-config-prettier": "^3.0.0",

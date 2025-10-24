@@ -4,3 +4,28 @@ out
 .DS_Store
 .eslintcache
 *.log*
+
+# Backend build artifacts
+backend/build/
+backend/CMakeCache.txt
+backend/CMakeFiles/
+
+# Test files
+backend_*.txt
+test_*.html
+test_*.js
+test_*.ps1
+
+# IDE
+.vscode/
+.idea/
+
+# OS
+Thumbs.db
+*.swp
+*.swo
+*~
+
+# Bun
+.bun/
+bun.lockb
