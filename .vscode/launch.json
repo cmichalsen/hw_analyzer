@@ -13,27 +13,47 @@
       "runtimeArgs": ["--sourcemap"],
       "env": {
         "REMOTE_DEBUGGING_PORT": "9222"
-      }
+      },
+      "outputCapture": "std",
+      "skipFiles": ["<node_internals>/**"],
+      "preLaunchTask": "Start SvelteKit Dev Server"
     },
     {
-      "name": "Debug Renderer Process",
-      "port": 9222,
-      "request": "attach",
+      "name": "Debug Renderer Process (SvelteKit)",
       "type": "chrome",
-      "webRoot": "${workspaceFolder}/src/renderer",
+      "request": "attach",
+      "port": 9222,
+      "webRoot": "${workspaceFolder}/src/renderer/src",
+      "sourceMaps": true,
       "timeout": 60000,
+      "urlFilter": "http://localhost:5173/*",
+      "skipFiles": ["<node_internals>/**", "**/node_modules/**"],
+      "sourceMapPathOverrides": {
+        "/*": "${webRoot}/*"
+      },
       "presentation": {
         "hidden": true
       }
+    },
+    {
+      "name": "Debug SvelteKit Dev Server",
+      "type": "node",
+      "request": "launch",
+      "cwd": "${workspaceFolder}/src/renderer",
+      "runtimeExecutable": "bun",
+      "runtimeArgs": ["vite", "dev", "--port", "5173"],
+      "skipFiles": ["<node_internals>/**"],
+      "console": "integratedTerminal"
     }
   ],
   "compounds": [
     {
-      "name": "Debug All",
-      "configurations": ["Debug Main Process", "Debug Renderer Process"],
+      "name": "Debug All (Electron + SvelteKit)",
+      "configurations": ["Debug SvelteKit Dev Server", "Debug Main Process", "Debug Renderer Process (SvelteKit)"],
       "presentation": {
         "order": 1
-      }
+      },
+      "stopAll": true
     }
   ]
 }
